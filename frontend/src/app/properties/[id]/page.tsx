@@ -76,7 +76,7 @@ function PropertyGallery({ images }: { images: string[] }) {
       {/* Photo count button */}
       <div className="absolute bottom-4 right-4 z-10">
         <button className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-lg font-medium text-sm text-white hover:bg-black/80 transition-colors shadow-lg">
-          <ImageIcon className="w-4 h-4" /> 161+
+          <ImageIcon className="w-4 h-4" /> {images.length}+
         </button>
       </div>
 
@@ -111,7 +111,7 @@ function PropertyGallery({ images }: { images: string[] }) {
 
 function StickyPageNav() {
   const [active, setActive] = useState('Overview');
-  const items = ['Overview', 'About', 'Rooms', 'Accessibility', 'Policies'];
+  const items = ['Overview', 'Rooms'];
 
   return (
     <div className="border-b border-gray-200 bg-white/95 backdrop-blur-sm sticky top-20 z-40 mb-10">
