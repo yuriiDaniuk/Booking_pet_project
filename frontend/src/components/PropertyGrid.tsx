@@ -3,10 +3,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Star, MapPinned, ChevronRight, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import api from '../lib/api';
 
 export default function PropertyGrid() {
+  const searchParams = useSearchParams();
+  const startDate = searchParams.get('startDate');
+  const endDate = searchParams.get('endDate');
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -17,7 +22,13 @@ export default function PropertyGrid() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/properties')
+    setLoading(true);
+    
+    const params: Record<string, string> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    
+    api.get('/properties', { params })
       .then(res => {
         const mappedProperties = res.data.map((p: any) => ({
           id: p.id,
@@ -40,7 +51,7 @@ export default function PropertyGrid() {
         console.error('Error fetching properties:', err);
         setLoading(false);
       });
-  }, []);
+  }, [startDate, endDate]);
 
   const updateHeight = React.useCallback(() => {
     if (imageRef.current) {

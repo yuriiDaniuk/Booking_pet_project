@@ -24,10 +24,29 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'healthy', message: 'LvivStay backend is running' });
 });
 
-// Get all properties
+// Get all properties (with optional date availability filter)
 app.get('/api/properties', async (req: Request, res: Response<Property[] | { error: string }>) => {
   try {
-    const properties = await prisma.property.findMany();
+    const { startDate, endDate } = req.query;
+    
+    // If dates are provided, filter out properties that are booked during those dates
+    let whereClause = {};
+    if (startDate && endDate) {
+      whereClause = {
+        bookings: {
+          none: {
+            AND: [
+              { startDate: { lt: new Date(endDate as string) } },
+              { endDate: { gt: new Date(startDate as string) } },
+            ]
+          }
+        }
+      };
+    }
+    
+    const properties = await prisma.property.findMany({
+      where: whereClause,
+    });
     res.json(properties);
   } catch (error) {
     console.error('Error fetching properties:', error);

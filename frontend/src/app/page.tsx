@@ -1,27 +1,19 @@
 "use client";
 
 import Hero from '@/components/Hero';
-import Link from 'next/link';
 import PropertyGrid from '@/components/PropertyGrid';
-import { useRouter } from 'next/navigation';
-import { Home, Heart, User, Search } from 'lucide-react';
-
+import { Suspense } from 'react';
 
 export default function Feed() {
-  const router = useRouter();
-
   return (
     <div className="pb-16 bg-gray-50 min-h-screen">
-      {/* Header */}
+      {/* Header & Search */}
       <Hero />
 
-      {/* Property Grid */}
-      <PropertyGrid />
-
-      <PropertyGrid />
-
-      <PropertyGrid />
-
+      {/* Property Grid with SearchParams */}
+      <Suspense fallback={<div className="p-10 text-center text-gray-500">Loading properties...</div>}>
+        <PropertyGrid />
+      </Suspense>
     </div>
   );
 }
