@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Calendar, Menu } from 'lucide-react';
+import { Calendar, Menu, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Hero() {
+  const { data: session } = useSession();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const router = useRouter();
@@ -13,7 +16,7 @@ export default function Hero() {
     const params = new URLSearchParams();
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
-    
+
     if (params.toString()) {
       router.push(`/?${params.toString()}`);
     } else {
@@ -42,13 +45,36 @@ export default function Hero() {
           <a href="#" className="hover:text-gray-300 transition-colors uppercase">Local Cuisine</a>
         </nav>
 
-        {/* Right side: Sign Up button */}
+        {/* Right side: Auth buttons */}
         <div className="flex items-center gap-4">
-          <button className="bg-[#487a74] hover:bg-[#3d6863] text-white px-6 py-2 rounded-full font-medium transition-colors shadow-lg uppercase text-sm tracking-wide">
-            Sign Up
-          </button>
+          {session ? (
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-2 text-sm font-medium">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <span>{session.user?.name}</span>
+              </div>
+              <button
+                onClick={() => signOut()}
+                className="bg-transparent border border-white hover:bg-white hover:text-gray-900 text-white px-5 py-2 rounded-full font-medium transition-colors text-sm tracking-wide uppercase"
+              >
+                Log Out
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link href="/auth/login" className="text-white hover:text-gray-200 font-medium text-sm tracking-wide uppercase hidden md:block">
+                Log In
+              </Link>
+              <Link href="/auth/register" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors shadow-lg uppercase text-sm tracking-wide">
+                Sign Up
+              </Link>
+            </div>
+          )}
+
           {/* Optional Hamburger for Mobile */}
-          <button className="md:hidden text-white">
+          <button className="md:hidden text-white ml-2">
             <Menu className="w-6 h-6" />
           </button>
         </div>
@@ -69,8 +95,8 @@ export default function Hero() {
             <Calendar className="text-gray-500 h-5 w-5 mr-3" />
             <div className="flex flex-col w-full">
               <span className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Check In</span>
-              <input 
-                type="date" 
+              <input
+                type="date"
                 className="bg-transparent border-none outline-none text-gray-900 font-medium w-full"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
@@ -83,8 +109,8 @@ export default function Hero() {
             <Calendar className="text-gray-500 h-5 w-5 mr-3" />
             <div className="flex flex-col w-full">
               <span className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Check Out</span>
-              <input 
-                type="date" 
+              <input
+                type="date"
                 className="bg-transparent border-none outline-none text-gray-900 font-medium w-full"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
@@ -94,9 +120,9 @@ export default function Hero() {
 
           {/* Search Button */}
           <div className="px-4 py-4 md:py-2 w-full md:w-auto bg-white/90 md:bg-transparent">
-            <button 
+            <button
               onClick={handleSearch}
-              className="w-full md:w-auto bg-[#487a74] hover:bg-[#3d6863] text-white px-10 py-4 rounded-full font-bold transition-colors shadow-md flex items-center justify-center tracking-wide uppercase"
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full font-bold transition-colors shadow-md flex items-center justify-center tracking-wide uppercase"
             >
               Search
             </button>
